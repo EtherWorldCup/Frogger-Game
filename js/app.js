@@ -19,7 +19,7 @@ class Enemy {
 
         if (this.x > 404) {
             this.x = -101;
-            this.y = 55 + (Math.floor(Math.random() * 3) * 83);
+            this.y = 50 + (Math.floor(Math.random() * 3) * 83);
             //离开画面后提速
             this.speed = Math.floor(Math.random() * (500 - 150 + 1)) + 150;
         }
@@ -34,7 +34,7 @@ class Enemy {
 
 // 现在实现你自己的玩家类
 // 这个类需要一个 update() 函数， render() 函数和一个 handleInput()函数
-class Player {
+class Gameplayer {
     constructor(x, y) {
         this.x = x;
         this.y = y;
@@ -52,25 +52,27 @@ class Player {
         }*/
         this.king = /*kings[chooseIndex(0, kings.length)]*/'images/char-boy.png';
     }
-
+    //参数dx, dy表示移动的格数
     update(dx = 0, dy = 0) {
+        //移动
         this.x += dx * 101;
         this.y += dy * 83;
-        //边界确认-右-左-下-上
+        
+        //边界确认
+        if (this.x < 0) {
+            this.x = 0;
+        }
+        
         if (this.x > 404) {
             this.x = 404;
         }
 
-        if (this.x < 0) {
-            this.x = 0;
+        if (this.y > 83 * 4 + 50) {
+            this.y = 83 * 4 + 50;
         }
 
-        if (this.y > 83 * 4 + 55) {
-            this.y = 83 * 4 + 55;
-        }
-
-        if (this.y < 55) {
-            this.y = 55;
+        if (this.y < 50) {
+            this.y = 50;
             this.goal = true;
             alert('you win');
             window.location.reload();
@@ -80,7 +82,8 @@ class Player {
     render() {
         ctx.drawImage(Resources.get(this.king), this.x, this.y);
     }
-
+    
+    //操作控制
     handleInput(operations) {
         switch (operations) {
             case 'up': {
@@ -110,11 +113,12 @@ class Player {
 // 把玩家对象放进一个叫 player 的变量里面
 let allEnemies = [];
 const createEnemy = function() {
-    const y = 55 + (Math.floor(Math.random() * 3) * 83);
+    const y = 50 + (Math.floor(Math.random() * 3) * 83);
     //速度区间100-300
     const speed = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
     const enemy = new Enemy(-101, y, speed);
     allEnemies.push(enemy);
+    
     //敌人个数设置
     if (allEnemies.length === 3) {
         clearInterval(countSetting);
@@ -123,23 +127,18 @@ const createEnemy = function() {
 let countSetting = setInterval(createEnemy, 1000);
 
 let playerx = Math.floor(Math.random() * 5) * 101;
-let playery = 55 + 83 * 4;
-let player = new Player(playerx, playery);
+let playery = 50 + 83 * 4;
+let player = new Gameplayer(playerx, playery);
 
 //碰撞检测
 function checkCollisions() {
     allEnemies.map((enemy) => {
         if (enemy.x - 101 < player.x && enemy.x + 101 > player.x && enemy.y === player.y) {
             player.x = Math.floor(Math.random() * 5) * 101;
-            player.y = 55 + 83 * 4;
-
+            player.y = 50 + 83 * 4;
         }
-        console.log(player.x);
-        console.log(enemy.x);
     })
 }
-
-
 
 // 这段代码监听游戏玩家的键盘点击事件并且代表将按键的关键数字送到 Player.handleInput()
 // 方法里面。你不需要再更改这段代码了。
